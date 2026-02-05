@@ -26,7 +26,7 @@ body {
 .app-container h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: red;
+  color: greenyellow; /*c'est bien ici que jai changer la couleur*/
   font-weight: bold;
 }
 
