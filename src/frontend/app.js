@@ -1,11 +1,15 @@
 //const apiEndpoint = "http://20.107.179.74/api/tasks";
 const apiEndpoint = "https://container-todo-app-papaux-lucien.purplemoss-90baa50f.switzerlandnorth.azurecontainerapps.io/api/tasks";
+const countryApiEndpoint = "https://function-210-papaux-lucien-dhcscqfehdhxd9gc.northeurope-01.azurewebsites.net/api/countCountries";
 
 $(document).ready(function () {
   // Charger les tâches au démarrage
   loadTasks();
 
-  // Ajouter une nouvelle tâcheF
+  // Charger le nombre de pays au démarrage
+  loadCountries();
+
+  // Ajouter une nouvelle tâche
   $("#todo-form").on("submit", async function (e) {
     e.preventDefault();
 
@@ -29,32 +33,28 @@ $(document).ready(function () {
 
   // Marquer une tâche comme terminée (ou non)
   $("#todo-list").on("click", ".task-toggle", async function () {
-    const $taskElement = $(this).closest("li"); // Trouve l'élément li parent
+    const $taskElement = $(this).closest("li");
     const taskId = $taskElement.data("id");
     const isCompleted = $taskElement.hasClass("completed");
-  
-    // Récupère le texte directement comme un nœud
+
     const description = $taskElement.contents().filter(function () {
       return this.nodeType === 3; // Node type 3 = texte
     }).text().trim();
-  
-    console.log("Description trouvée :", description);
-  
+
     if (!description) {
       console.error("Erreur : la description de la tâche est vide !");
       return;
     }
-  
-    // Prépare l'objet mis à jour
+
     const updatedTask = { id: taskId, description: description, completed: !isCompleted };
-  
+
     try {
       await fetch(apiEndpoint, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTask),
       });
-      loadTasks(); // Recharge les tâches après mise à jour
+      loadTasks();
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la tâche :", error);
     }
@@ -62,7 +62,7 @@ $(document).ready(function () {
 
   // Supprimer une tâche
   $("#todo-list").on("click", ".delete-btn", async function (e) {
-    e.stopPropagation(); // Empêcher le clic sur la tâche elle-même
+    e.stopPropagation();
     const taskId = $(this).parent().data("id");
 
     try {
@@ -81,10 +81,8 @@ $(document).ready(function () {
       const response = await fetch(apiEndpoint);
       const tasks = await response.json();
 
-      // Trier les tâches : non complétées d'abord, complétées ensuite
       tasks.sort((a, b) => a.completed - b.completed);
 
-      // Effacer la liste et ajouter les tâches
       $("#todo-list").empty();
       tasks.forEach((task) => {
         const listItem = $("<li>")
@@ -100,13 +98,28 @@ $(document).ready(function () {
             $("<input>")
               .attr("type", "checkbox")
               .addClass("task-toggle")
-              .prop("checked", task.completed) // Utilisation correcte de "completed"
+              .prop("checked", task.completed)
           );
 
         $("#todo-list").append(listItem);
       });
     } catch (error) {
       console.error("Erreur lors du chargement des tâches :", error);
+    }
+  }
+
+  // Charger le nombre de pays depuis l'API Azure Function
+  async function loadCountries() {
+    try {
+      const response = await fetch(countryApiEndpoint);
+      if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
+      const data = await response.json();
+
+      // Afficher le résultat dans un div avec id="country-count"
+      $("#country-count").text(data.message);
+    } catch (error) {
+      console.error("Erreur lors du chargement des pays :", error);
+      $("#country-count").text("Erreur de chargement");
     }
   }
 });
