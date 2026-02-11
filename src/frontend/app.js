@@ -6,8 +6,9 @@ $(document).ready(function () {
   // Charger les tâches au démarrage
   loadTasks();
 
-  // Charger le nombre de pays au démarrage
-  loadCountries();
+  $("#refresh-countries").on("click", function () {
+    loadCountries();
+  });
 
   // Ajouter une nouvelle tâche
   $("#todo-form").on("submit", async function (e) {
