@@ -1,134 +1,235 @@
-/* Général */
-body {
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #f0f4fd, #cce5ff);
+* {
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color: #333;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Conteneur principal */
-.app-container {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+body, html {
+  height: 100%;
   width: 100%;
-  max-width: 400px;
+  overflow: hidden;
+}
+
+.background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  transition: background 1s ease;
+  z-index: -2;
+}
+
+/* Container central */
+.app-container {
+  position: relative;
+  width: 420px;
+  padding: 40px;
+  margin: 60px auto;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px);
   text-align: center;
+  box-shadow: 0 30px 50px rgba(0,0,0,0.5);
+  transition: all 0.5s ease;
 }
 
 /* Titre */
-.app-container h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: greenyellow; /*c'est bien ici que jai changer la couleur*/
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #00f5ff, #00ff94);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: default;
+  text-shadow: 0 0 5px #00ff94;
+}
+
+/* Background picker */
+.bg-picker {
+  margin-bottom: 20px;
+}
+
+#bg-button {
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00f5ff, #0072ff);
+  color: white;
   font-weight: bold;
+  transition: 0.3s;
+}
+
+#bg-button:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 10px 25px rgba(0,114,255,0.7);
 }
 
 /* Formulaire */
 #todo-form {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 25px;
 }
 
 #todo-input {
   flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px 0 0 8px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: white;
   outline: none;
-  transition: border-color 0.3s ease;
+  font-size: 1rem;
+  transition: 0.3s;
 }
 
 #todo-input:focus {
-  border-color: #007bff;
+  box-shadow: 0 0 15px rgba(0,255,150,0.5);
 }
 
-button {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
+button[type="submit"] {
+  padding: 14px 20px;
+  border-radius: 14px;
   border: none;
-  border-radius: 0 8px 8px 0;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: bold;
+  background: linear-gradient(135deg, #00f5ff, #00ff94);
+  color: white;
+  transition: 0.3s;
 }
 
-button:hover {
-  background-color: #0056b3;
+button[type="submit"]:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 12px 30px rgba(0,255,150,0.7);
 }
 
-/* Liste des tâches */
-#todo-list {
+/* Liste */
+ul {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
-#todo-list li {
+li {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  background: #f9f9f9;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  justify-content: space-between;
+  padding: 14px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+  background: rgba(255,255,255,0.12);
+  transition: 0.5s;
+  position: relative;
+  perspective: 500px;
 }
 
-#todo-list li:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-#todo-list li.completed {
+li.completed .task-text {
   text-decoration: line-through;
-  color: #888;
-  background: #e6e6e6;
+  opacity: 0.6;
 }
 
-/* Boutons */
+.task-toggle {
+  transform: scale(1.3);
+  margin-right: 10px;
+  accent-color: #00ff94;
+}
+
 .delete-btn {
-  background: none;
-  border: none;
-  color: #e74c3c;
+  background: transparent;
+  color: #ff4d6d;
+  font-weight: bold;
   cursor: pointer;
-  font-size: 1rem;
-  transition: color 0.3s ease;
+  font-size: 1.2rem;
 }
 
 .delete-btn:hover {
-  color: #c0392b;
+  color: #ff1e4d;
+  transform: scale(1.3) rotate(10deg);
 }
 
-/* Checkboxes */
-.task-toggle {
-  margin-right: 10px;
-  transform: scale(1.2);
+/* Animation glisser + rotation lors de la suppression */
+li.slide-out {
+  transform: rotateZ(20deg) translateX(200%) scale(0.5);
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+/* Pop animation ajout */
+.pop {
+  animation: popEffect 0.4s ease forwards;
+}
+
+@keyframes popEffect {
+  0% { transform: scale(0.8); opacity:0; }
+  50% { transform: scale(1.2); opacity:1; }
+  100% { transform: scale(1); opacity:1; }
+}
+
+/* Progress bar */
+.progress-container {
+  margin-top: 18px;
+  height: 12px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 25px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00f5ff, #00ff94);
+  transition: width 0.7s ease, background 0.5s ease;
+}
+
+#task-stats {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  opacity: 0.85;
+}
+
+/* Refresh Countries */
+#refresh-countries {
+  margin-top: 15px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
   cursor: pointer;
-  accent-color: #007bff;
+  background: linear-gradient(135deg, #ffb347, #ffcc33);
+  font-weight: bold;
+  transition: 0.3s;
 }
 
-/* Responsivité */
-@media (max-width: 480px) {
-  #todo-form {
-    flex-direction: column;
-  }
+#refresh-countries:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(255,204,51,0.6);
+}
 
-  #todo-input {
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
+/* Animation pop + glow pour le nombre */
+#country-count.show {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  font-size: 6rem;
+  color: #ff2e2e;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: 100;
+  text-shadow: 0 0 25px #ff2e2e, 0 0 60px #ff6e6e;
+  animation: countryPop 1s ease forwards;
+}
 
-  button {
-    border-radius: 8px;
-  }
+@keyframes countryPop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity:0; }
+  40% { transform: translate(-50%, -50%) scale(1.3); opacity:1; }
+  70% { transform: translate(-50%, -50%) scale(0.9); opacity:1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity:1; }
+}
+
+/* Hover tasks 3D */
+li:hover {
+  transform: rotateX(5deg) rotateY(5deg) scale(1.02);
+  box-shadow: 0 12px 25px rgba(0,255,150,0.4);
+  transition: 0.3s;
 }
