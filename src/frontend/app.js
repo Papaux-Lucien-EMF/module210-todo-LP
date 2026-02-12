@@ -2,6 +2,7 @@ const apiEndpoint = "https://container-todo-app-papaux-lucien.purplemoss-90baa50
 const countryApiEndpoint = "https://function-210-papaux-lucien-dhcscqfehdhxd9gc.northeurope-01.azurewebsites.net/api/countCountries";
 
 $(document).ready(function () {
+
   const $background = $(".background");
   const $bgButton = $("#bg-button");
   const $bgColor = $("#bg-color");
@@ -11,7 +12,6 @@ $(document).ready(function () {
   setInterval(updateBackgroundGradient, 60000);
   loadTasks();
 
-  // --- Todo add ---
   $("#todo-form").on("submit", async function(e){
     e.preventDefault();
     const desc = $("#todo-input").val().trim();
@@ -20,92 +20,82 @@ $(document).ready(function () {
     await fetch(apiEndpoint,{
       method:"POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ description: desc })
+      body: JSON.stringify({ description: desc, pinned:false })
     });
 
     $("#todo-input").val("");
     loadTasks();
   });
 
-  // --- Todo check ---
   $("#todo-list").on("click", ".task-toggle", async function(){
     const $li = $(this).closest("li");
     const id = $li.data("id");
     const completed = !$li.hasClass("completed");
     const text = $li.find(".task-text").text();
-
-    $li.addClass("pop");
+    const pinned = $li.hasClass("pinned");
 
     await fetch(apiEndpoint,{
       method:"PUT",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ id, description: text, completed })
+      body: JSON.stringify({ id, description: text, completed, pinned })
     });
 
-    setTimeout(loadTasks, 200);
+    loadTasks();
   });
 
-  // --- Todo delete avec animation ---
-  $("#todo-list").on("click", ".delete-btn", async function(){
+  $("#todo-list").on("click", ".pin-btn", async function () {
     const $li = $(this).closest("li");
     const id = $li.data("id");
+    const completed = $li.hasClass("completed");
+    const pinned = !$li.hasClass("pinned");
+    const description = $li.find(".task-text").text();
 
-    $li.addClass("slide-out");
+    await fetch(apiEndpoint, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, description, completed, pinned }),
+    });
 
-    setTimeout(async ()=> {
-      await fetch(`${apiEndpoint}?id=${id}`, { method:"DELETE" });
-      loadTasks();
-    }, 600);
+    loadTasks();
   });
 
-  // --- Background picker ---
   $bgButton.on("click", ()=> $bgColor.click());
   $bgColor.on("input", function(){
     const color = $(this).val();
     $background.css("background", color);
     customBg = true;
-
-    // Contraste texte
-    const rgb = hexToRgb(color);
-    const brightness = (rgb.r*299 + rgb.g*587 + rgb.b*114)/1000;
-    if(brightness > 180){
-      $(".app-container, li, #todo-input, #task-stats, #country-count, #refresh-countries, #app-title").css("color","black");
-    } else {
-      $(".app-container, li, #todo-input, #task-stats, #country-count, #refresh-countries, #app-title").css("color","white");
-    }
   });
 
-  function hexToRgb(hex) {
-    let c = hex.replace("#",""), r=0,g=0,b=0;
-    if(c.length===3){ r=parseInt(c[0]+c[0],16); g=parseInt(c[1]+c[1],16); b=parseInt(c[2]+c[2],16); }
-    else{ r=parseInt(c.substring(0,2),16); g=parseInt(c.substring(2,4),16); b=parseInt(c.substring(4,6),16); }
-    return {r,g,b};
-  }
-
-  // --- Load tasks & progress ---
   async function loadTasks(){
     try {
       const res = await fetch(apiEndpoint);
       const tasks = await res.json();
-      tasks.sort((a,b)=> a.completed-b.completed);
+
+      tasks.sort((a,b) => {
+        if(a.pinned && !b.pinned) return -1;
+        if(!a.pinned && b.pinned) return 1;
+        return a.completed - b.completed;
+      });
 
       $("#todo-list").empty();
-      tasks.forEach(task=>{
-        const li = $("<li>").data("id",task.id);
+      tasks.forEach(task => {
+        const li = $("<li>").data("id", task.id);
         if(task.completed) li.addClass("completed");
+        if(task.pinned) li.addClass("pinned");
 
         li.append(
           $("<input>").attr("type","checkbox").addClass("task-toggle").prop("checked", task.completed),
           $("<span>").addClass("task-text").text(task.description),
-          $("<button>").addClass("delete-btn").text("✖")
+          $("<button>").addClass("pin-btn").text("📌")
         );
-        li.addClass("pop");
+
         $("#todo-list").append(li);
       });
 
       updateProgress(tasks);
+      enableDragDelete();
     } catch(e){
-      console.error("Erreur chargement tasks:",e);
+      console.error("Erreur chargement tasks:", e);
     }
   }
 
@@ -114,17 +104,10 @@ $(document).ready(function () {
     const completed = tasks.filter(t=>t.completed).length;
     const percent = total===0 ? 0 : Math.round((completed/total)*100);
 
-    const $bar = $("#progress-bar");
-    $bar.css("width", percent+"%");
-
-    if(percent<30) $bar.css("background","linear-gradient(90deg,#ff4d6d,#ff9966)");
-    else if(percent<70) $bar.css("background","linear-gradient(90deg,#fcd34d,#facc15)");
-    else $bar.css("background","linear-gradient(90deg,#00f5ff,#00ff94)");
-
+    $("#progress-bar").css("width", percent+"%");
     $("#task-stats").text(`${completed} / ${total} completed (${percent}%)`);
   }
 
-  // --- Background dynamique ---
   function updateBackgroundGradient(){
     if(customBg) return;
 
@@ -139,19 +122,44 @@ $(document).ready(function () {
     $background.css("background", `linear-gradient(135deg, ${color1}, ${color2})`);
   }
 
-  // --- Refresh countries avec animation ---
+  /* ===== Refresh Countries SANS POPUP ===== */
   $("#refresh-countries").on("click", async ()=>{
     try {
       const res = await fetch(countryApiEndpoint);
-      if(!res.ok) throw new Error(`Erreur API : ${res.status}`);
+      if(!res.ok) throw new Error();
       const data = await res.json();
 
-      $("#country-count").text(data.message).addClass("show");
-      setTimeout(()=> $("#country-count").removeClass("show"), 1500);
+      $("#country-count").text(data.message);
     } catch(e){
-      console.error("Erreur chargement pays:",e);
-      $("#country-count").text("Erreur de chargement").addClass("show");
-      setTimeout(()=> $("#country-count").removeClass("show"), 1500);
+      $("#country-count").text("Erreur de chargement");
     }
   });
+
+  function enableDragDelete(){
+    const $trash = $("#trash");
+    $("li").attr("draggable", true);
+
+    $("li").off("dragstart").on("dragstart", function(e){
+      e.originalEvent.dataTransfer.setData("text/plain", $(this).data("id"));
+    });
+
+    $trash.off("dragover").on("dragover", function(e){
+      e.preventDefault();
+      $(this).addClass("drag-over");
+    });
+
+    $trash.off("dragleave").on("dragleave", function(){
+      $(this).removeClass("drag-over");
+    });
+
+    $trash.off("drop").on("drop", async function(e){
+      e.preventDefault();
+      $(this).removeClass("drag-over");
+      const id = e.originalEvent.dataTransfer.getData("text/plain");
+
+      await fetch(`${apiEndpoint}?id=${id}`, { method:"DELETE" });
+      loadTasks();
+    });
+  }
+
 });

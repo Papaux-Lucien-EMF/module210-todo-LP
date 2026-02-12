@@ -2,55 +2,43 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
-
-body, html {
+body,
+html {
   height: 100%;
   width: 100%;
   overflow: hidden;
 }
-
 .background {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, #1e3c72, #2a5298);
   transition: background 1s ease;
   z-index: -2;
 }
-
-/* Container central */
 .app-container {
   position: relative;
   width: 420px;
   padding: 40px;
   margin: 60px auto;
   border-radius: 25px;
-  background: rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(20px);
   text-align: center;
-  box-shadow: 0 30px 50px rgba(0,0,0,0.5);
-  transition: all 0.5s ease;
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
 }
-
-/* Titre */
 h1 {
   font-size: 2.2rem;
   margin-bottom: 20px;
   background: linear-gradient(90deg, #00f5ff, #00ff94);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  cursor: default;
   text-shadow: 0 0 5px #00ff94;
-}
-
-/* Background picker */
-.bg-picker {
-  margin-bottom: 20px;
-}
-
+} /* Background button */
 #bg-button {
   padding: 10px 15px;
   border-radius: 12px;
@@ -61,35 +49,25 @@ h1 {
   font-weight: bold;
   transition: 0.3s;
 }
-
 #bg-button:hover {
   transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 10px 25px rgba(0,114,255,0.7);
-}
-
-/* Formulaire */
+  box-shadow: 0 10px 25px rgba(0, 114, 255, 0.7);
+} /* Form */
 #todo-form {
   display: flex;
   gap: 10px;
   margin-bottom: 25px;
 }
-
 #todo-input {
   flex: 1;
   padding: 14px;
   border-radius: 14px;
   border: none;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
   outline: none;
   font-size: 1rem;
-  transition: 0.3s;
 }
-
-#todo-input:focus {
-  box-shadow: 0 0 15px rgba(0,255,150,0.5);
-}
-
 button[type="submit"] {
   padding: 14px 20px;
   border-radius: 14px;
@@ -100,18 +78,35 @@ button[type="submit"] {
   color: white;
   transition: 0.3s;
 }
-
 button[type="submit"]:hover {
   transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 12px 30px rgba(0,255,150,0.7);
+  box-shadow: 0 12px 30px rgba(0, 255, 150, 0.7);
+} /* ===== Refresh Countries (MÊME BLEU) ===== */
+#refresh-countries {
+  margin-top: 15px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: linear-gradient(135deg, #00f5ff, #0072ff);
+  color: white;
+  transition: 0.3s;
 }
-
-/* Liste */
+#refresh-countries:hover {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 12px 30px rgba(0, 114, 255, 0.6);
+}
+#country-count {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  opacity: 0.9;
+} /* Liste */
 ul {
   list-style: none;
   padding: 0;
 }
-
 li {
   display: flex;
   align-items: center;
@@ -119,117 +114,62 @@ li {
   padding: 14px;
   border-radius: 16px;
   margin-bottom: 14px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   transition: 0.5s;
-  position: relative;
-  perspective: 500px;
+  cursor: grab;
 }
-
 li.completed .task-text {
   text-decoration: line-through;
   opacity: 0.6;
 }
-
 .task-toggle {
   transform: scale(1.3);
   margin-right: 10px;
   accent-color: #00ff94;
 }
-
-.delete-btn {
+.pin-btn {
   background: transparent;
-  color: #ff4d6d;
-  font-weight: bold;
+  border: none;
+  font-size: 1.3rem;
   cursor: pointer;
-  font-size: 1.2rem;
+  color: #ffd93b;
 }
-
-.delete-btn:hover {
-  color: #ff1e4d;
-  transform: scale(1.3) rotate(10deg);
-}
-
-/* Animation glisser + rotation lors de la suppression */
-li.slide-out {
-  transform: rotateZ(20deg) translateX(200%) scale(0.5);
-  opacity: 0;
-  transition: transform 0.6s ease, opacity 0.6s ease;
-}
-
-/* Pop animation ajout */
-.pop {
-  animation: popEffect 0.4s ease forwards;
-}
-
-@keyframes popEffect {
-  0% { transform: scale(0.8); opacity:0; }
-  50% { transform: scale(1.2); opacity:1; }
-  100% { transform: scale(1); opacity:1; }
-}
-
-/* Progress bar */
+li.pinned {
+  border: 2px solid #ffd93b;
+  background: rgba(255, 217, 59, 0.15);
+} /* Progress bar */
 .progress-container {
   margin-top: 18px;
   height: 12px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 25px;
   overflow: hidden;
 }
-
 .progress-bar {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, #00f5ff, #00ff94);
-  transition: width 0.7s ease, background 0.5s ease;
+  transition: width 0.7s ease;
 }
-
 #task-stats {
   margin-top: 8px;
   font-size: 0.95rem;
   font-weight: bold;
   opacity: 0.85;
-}
-
-/* Refresh Countries */
-#refresh-countries {
-  margin-top: 15px;
-  padding: 12px 18px;
-  border-radius: 14px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(135deg, #ffb347, #ffcc33);
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-#refresh-countries:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(255,204,51,0.6);
-}
-
-/* Animation pop + glow pour le nombre */
-#country-count.show {
+} /* Trash */
+#trash {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  font-size: 6rem;
-  color: #ff2e2e;
-  transform: translate(-50%, -50%) scale(0);
-  z-index: 100;
-  text-shadow: 0 0 25px #ff2e2e, 0 0 60px #ff6e6e;
-  animation: countryPop 1s ease forwards;
-}
-
-@keyframes countryPop {
-  0% { transform: translate(-50%, -50%) scale(0); opacity:0; }
-  40% { transform: translate(-50%, -50%) scale(1.3); opacity:1; }
-  70% { transform: translate(-50%, -50%) scale(0.9); opacity:1; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity:1; }
-}
-
-/* Hover tasks 3D */
-li:hover {
-  transform: rotateX(5deg) rotateY(5deg) scale(1.02);
-  box-shadow: 0 12px 25px rgba(0,255,150,0.4);
+  right: 20px;
+  bottom: 20px;
+  font-size: 2rem;
+  padding: 15px 20px;
+  background: rgba(255, 77, 109, 0.2);
+  border-radius: 15px;
+  color: #ff4d6d;
+  cursor: pointer;
   transition: 0.3s;
+}
+#trash.drag-over {
+  background: rgba(255, 77, 109, 0.5);
+  transform: scale(1.2);
 }

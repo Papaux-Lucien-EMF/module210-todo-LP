@@ -16,15 +16,14 @@
   <div class="app-container">
     <h1 id="app-title">🚀 Ultimate Todo</h1>
 
-    <!-- Bouton pour changer la couleur du fond -->
     <div class="bg-picker">
-      <button id="bg-button">🎨 Background</button>
+      <button id="bg-button">🎨 Personnalise la couleur de fond</button>
       <input type="color" id="bg-color" style="display:none;">
     </div>
 
     <form id="todo-form">
       <input type="text" id="todo-input" placeholder="Add a new mission..." required>
-      <button type="submit">Add</button>
+      <button type="submit">Ajouter</button>
     </form>
 
     <ul id="todo-list"></ul>
@@ -34,9 +33,10 @@
     </div>
     <div class="stats" id="task-stats"></div>
 
-    <!-- Bouton pour afficher nombre de pays -->
-    <button id="refresh-countries">🌍 Refresh Countries</button>
+    <button id="refresh-countries">🌍 Nombre de pays ?</button>
     <p id="country-count"></p>
   </div>
+
+  <div id="trash">🗑️ Lance moi ici et je disparais</div>
 </body>
 </html>
