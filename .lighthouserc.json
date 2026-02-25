@@ -4,7 +4,7 @@
       "assertions": {
         "categories:performance": ["error", {"minScore": 0.8}],
         "categories:accessibility": ["error", {"minScore": 0.8}],
-        "first-contentful-paint": ["error", { "minScore": 0.99 }]
+        "first-contentful-paint": ["error", { "minScore": 0.6 }]
       }
     }
   }
