@@ -1,0 +1,33 @@
+name: Build and push Docker image to ACR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'   # Ne déclenche que si backend change
+
+env:
+  REGISTRY: ${{ secrets.REGISTRY }}
+  IMAGE_NAME: backend-app
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to Azure Container Registry
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login $REGISTRY \
+          -u "${{ secrets.ACR_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t $REGISTRY/$IMAGE_NAME:${{ github.sha }} ./backend
+
+      - name: Push Docker image
+        run: |
+          docker push $REGISTRY/$IMAGE_NAME:${{ github.sha }}
