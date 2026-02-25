@@ -24,7 +24,6 @@ var pool =
   });
 
 // Expose the Pool object within this module
-
 module.exports = Object.freeze({
   pool: pool
 });
