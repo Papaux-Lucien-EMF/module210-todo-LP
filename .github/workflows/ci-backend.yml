@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ${{ secrets.REGISTRY }}
-  IMAGE_NAME: backend-app-LucienP
+  IMAGE_NAME: backend-app-lucienp
 
 jobs:
   build-and-push:
