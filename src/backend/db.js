@@ -25,7 +25,6 @@ var pool =
 
 // Expose the Pool object within this module
 
-//Dsd
 module.exports = Object.freeze({
   pool: pool
 });
