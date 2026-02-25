@@ -64,15 +64,8 @@ jobs:
             https://nice-ground-07c623803.4.azurestaticapps.net/
           uploadArtifacts: true
           artifactName: lighthouse-results
-
-      - name: Afficher le lien vers le rapport Lighthouse
-        if: success()  # seulement si l'étape précédente réussit
-        run: |
-          echo "------------------------------------------------------"
-          echo "Le rapport Lighthouse est disponible ici :"
-          echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/suites/$GITHUB_RUN_ID/artifacts"
-          echo "Téléchargez lighthouse-results.zip pour voir le détail"
-          echo "------------------------------------------------------"
+          configPath: ./.lighthouserc.json
+        
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
