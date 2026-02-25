@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '/src/backend/**'   # Ne déclenche que si backend change
+      - 'src/backend/**'   # déclenche seulement si backend change
 
 env:
   REGISTRY: ${{ secrets.REGISTRY }}
@@ -26,7 +26,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $REGISTRY/$IMAGE_NAME:${{ github.sha }} ./backend
+          docker build -t $REGISTRY/$IMAGE_NAME:${{ github.sha }} ./src/backend
 
       - name: Push Docker image
         run: |
